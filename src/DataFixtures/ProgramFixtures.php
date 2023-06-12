@@ -9,29 +9,30 @@ use Doctrine\Persistence\ObjectManager;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
-    {
-      $program = new Program();
+  public function load(ObjectManager $manager)
+  {
+    $program = new Program();
+    $program->setTitle('Arcane');
+    $program->setCategory($this->getReference('category_Animation'));
+    $this->addReference('program_Arcane', $program);
 
-        $program->setTitle('Walking dead');
+    $program->setTitle('Walking dead');
 
-        $program->setSynopsis('Des zombies envahissent la terre');
+    $program->setSynopsis('Des zombies envahissent la terre');
 
-        $program->setCategory($this->getReference('category_Action'));
+    $program->setCategory($this->getReference('category_Action'));
 
-        $manager->persist($program);
+    $manager->persist($program);
 
-        $manager->flush();
-    }
-
-    public function getDependencies()
-    {
-        // Tu retournes ici toutes les classes de fixtures dont ProgramFixtures dépend
-        return [
-          CategoryFixtures::class,
-        ];
-    }
-
-
+    $manager->flush();
+    
+  }
+  
+  public function getDependencies()
+  {
+    // Tu retournes ici toutes les classes de fixtures dont ProgramFixtures dépend
+    return [
+      CategoryFixtures::class,
+    ];
+  }
 }
-
