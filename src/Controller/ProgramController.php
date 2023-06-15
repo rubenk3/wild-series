@@ -2,27 +2,48 @@
 
 namespace App\Controller;
 
+use App\Entity\Program;
 use App\Repository\ProgramRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 class ProgramController extends AbstractController
 {
-    #[Route('/show/{id<^[0-9]+$>}', name: 'program_show')]
-    public function show(int $id, ProgramRepository $programRepository): Response
-    {
-        $program = $programRepository->findOneBy(['id' => $id]);
+  #[Route('/program/{id}/', name: 'program_show')]
+  public function show(Program $program): Response
+  {
+
+    return $this->render('program.html.twig', ['program' => $program]);
+  }
+
+  #[Route('/new', name: 'new')]
+  public function new(Request $request, ProgramRepository $programRepository): Response
+  {
+
+    $program = new Program();
 
 
-        if (!$program) {
-            throw $this->createNotFoundException(
-                'No program with id : ' . $id . ' found in program\'s table.'
-            );
-        }
-        return $this->render('program/show.html.twig', [
-            'program' => $program,
-        ]);
+    $form = $this->createForm(CategoryType::class, $program);
+
+
+    $form->handleRequest($request);
+
+
+    if ($form->isSubmitted()) {
+
+      $programRepository->save($program, true);
+
+      return $this->redirectToRoute('program_index');
+      
     }
+
+
+    return $this->render('program/new.html.twig', [
+
+      'form' => $form,
+
+    ]);
+  }
 }
